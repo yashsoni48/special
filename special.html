@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Very Important Question</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --ink: #f6f1ea;
+    --ink-dim: #cabfe0;
+    --bg: #15112a;
+    --bg-2: #1e1840;
+    --card: #241c47;
+    --pink: #ff5da2;
+    --pink-deep: #d63e84;
+    --gold: #ffd166;
+    --mint: #6ee7b7;
+    --line: rgba(246,241,234,0.14);
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{
+    margin:0; padding:0; height:100%;
+    background: radial-gradient(circle at 20% 10%, #241c4d 0%, var(--bg) 55%);
+    color: var(--ink);
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+  }
+
+  .stage{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .scene{
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 32px 20px;
+    opacity: 0;
+    transform: scale(0.96);
+    transition: opacity .5s ease, transform .5s ease;
+  }
+  .scene.active{
+    display: flex;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  h1,h2,h3{ font-family: 'Fredoka', sans-serif; margin: 0; line-height: 1.15; }
+
+  .kicker{
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  .btn{
+    font-family: 'Fredoka', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--bg);
+    background: var(--pink);
+    border: none;
+    padding: 14px 30px;
+    border-radius: 40px;
+    cursor: pointer;
+    margin-top: 26px;
+    box-shadow: 0 6px 0 var(--pink-deep);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:active{ transform: translateY(4px); box-shadow: 0 2px 0 var(--pink-deep); }
+  .btn.ghost{
+    background: transparent;
+    color: var(--ink);
+    border: 2px solid var(--line);
+    box-shadow: none;
+  }
+  .btn.ghost:active{ transform: translateY(2px); }
+
+  /* ---------- Scene 1: trailer ---------- */
+  #scene-trailer .studio{
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--ink-dim);
+    letter-spacing: 3px;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp .8s ease .2s forwards;
+  }
+  #scene-trailer h1{
+    font-size: clamp(32px, 8vw, 64px);
+    max-width: 720px;
+    background: linear-gradient(120deg, var(--pink), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    opacity: 0;
+    animation: fadeUp .8s ease .6s forwards;
+  }
+  #scene-trailer .tagline{
+    margin-top: 18px;
+    color: var(--ink-dim);
+    font-size: 15px;
+    max-width: 420px;
+    opacity: 0;
+    animation: fadeUp .8s ease 1s forwards;
+  }
+  #scene-trailer .btn{ opacity: 0; animation: fadeUp .8s ease 1.4s forwards; }
+  @keyframes fadeUp{ from{ opacity:0; transform: translateY(14px);} to{ opacity:1; transform: translateY(0);} }
+
+  /* ---------- Scene 2: quiz ---------- */
+  .quiz-card{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 30px 26px;
+    max-width: 460px;
+    width: 100%;
+  }
+  .progress-track{
+    width: 100%;
+    height: 6px;
+    border-radius: 6px;
+    background: var(--bg-2);
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .progress-fill{
+    height: 100%;
+    background: var(--gold);
+    width: 0%;
+    transition: width .35s ease;
+  }
+  .quiz-q{ font-size: 19px; margin-bottom: 18px; }
+  .quiz-opts{ display: flex; flex-direction: column; gap: 10px; }
+  .opt{
+    font-family: 'Poppins', sans-serif;
+    text-align: left;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 12px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14.5px;
+    transition: border-color .15s ease, transform .1s ease;
+  }
+  .opt:hover{ border-color: var(--pink); transform: translateX(2px); }
+
+  /* ---------- Scene 2.5: memes ---------- */
+  .meme-card{
+    background: #0d0b1c;
+    border: 3px solid var(--ink);
+    border-radius: 10px;
+    width: min(360px, 88vw);
+    padding: 18px 14px 22px;
+    position: relative;
+  }
+  .meme-emoji{ font-size: 54px; margin: 10px 0 16px; }
+  .meme-top, .meme-bottom{
+    font-family: Impact, 'Fredoka', sans-serif;
+    text-transform: uppercase;
+    font-size: clamp(20px, 6vw, 28px);
+    line-height: 1.15;
+    color: #fff;
+    -webkit-text-stroke: 1.5px #000;
+    letter-spacing: 0.5px;
+  }
+  .meme-bottom{ margin-top: 6px; }
+
+  /* ---------- Scene 3: glitch / terminal ---------- */
+  .terminal{
+    background: #0d0b1c;
+    border: 1px solid var(--mint);
+    border-radius: 12px;
+    width: min(520px, 92vw);
+    padding: 22px 22px 26px;
+    text-align: left;
+    font-family: 'Space Mono', monospace;
+    font-size: 13.5px;
+    color: var(--mint);
+    box-shadow: 0 0 40px rgba(110,231,183,0.15);
+  }
+  .terminal .bar{
+    display: flex; gap: 6px; margin-bottom: 14px;
+  }
+  .terminal .dot{ width:10px; height:10px; border-radius:50%; background: #45406b; }
+  #term-lines{ min-height: 150px; white-space: pre-wrap; }
+  #scene-glitch h2{
+    position: relative;
+    font-size: clamp(22px, 5vw, 30px);
+    margin-bottom: 18px;
+    color: var(--ink);
+  }
+  .glitching{ animation: glitchShake .18s infinite; }
+  @keyframes glitchShake{
+    0%{ transform: translate(0,0); }
+    25%{ transform: translate(-2px,1px); }
+    50%{ transform: translate(2px,-1px); }
+    75%{ transform: translate(-1px,-1px); }
+    100%{ transform: translate(0,0); }
+  }
+
+  /* ---------- Scene 4: finale ---------- */
+  #scene-final h1{
+    font-size: clamp(30px, 7vw, 52px);
+    max-width: 640px;
+  }
+  #scene-final .sub{
+    margin-top: 14px;
+    color: var(--ink-dim);
+    max-width: 460px;
+    font-size: 15.5px;
+  }
+  .choice-row{
+    margin-top: 34px;
+    display: flex;
+    gap: 18px;
+    position: relative;
+    height: 60px;
+    align-items: center;
+  }
+  #btn-yes{
+    background: var(--mint);
+    box-shadow: 0 6px 0 #2e9c73;
+    color: #0d2417;
+  }
+  #btn-no{
+    position: relative;
+    background: var(--bg-2);
+    color: var(--ink-dim);
+    border: 1px solid var(--line);
+    box-shadow: none;
+    margin-top: 0;
+  }
+
+  #scene-yes h1{
+    font-size: clamp(34px, 9vw, 68px);
+    background: linear-gradient(120deg, var(--gold), var(--pink));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  #scene-yes .sub{ margin-top: 14px; color: var(--ink-dim); font-size: 16px; }
+
+  canvas#confetti{
+    position: fixed; inset: 0; pointer-events: none; z-index: 50;
+  }
+
+  .footer-note{
+    position: absolute;
+    bottom: 14px;
+    left: 0; right: 0;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10.5px;
+    color: rgba(246,241,234,0.28);
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 420px){
+    .choice-row{ flex-direction: column; height: auto; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="stage">
+
+  <!-- SCENE 1: TRAILER -->
+  <section class="scene active" id="scene-trailer">
+    <div class="studio">A TOTALLY BIASED PRODUCTION</div>
+    <h1 id="trailer-title">A Very Important Question</h1>
+    <div class="tagline" id="trailer-tagline">from One Tamatar to another.</div>
+    <button class="btn" onclick="goTo('quiz')">Press Play</button>
+  </section>
+
+  <!-- SCENE 2: QUIZ -->
+  <section class="scene" id="scene-quiz">
+    <div class="kicker">A SHORT & COMPLETELY RIGGED QUIZ</div>
+    <div class="quiz-card">
+      <div class="progress-track"><div class="progress-fill" id="quiz-progress"></div></div>
+      <div class="quiz-q" id="quiz-question"></div>
+      <div class="quiz-opts" id="quiz-options"></div>
+    </div>
+  </section>
+
+  <!-- SCENE 2.5: MEMES -->
+  <section class="scene" id="scene-memes">
+    <div class="kicker">A QUICK MEME INTERMISSION</div>
+    <div class="meme-card">
+      <div class="meme-emoji" id="meme-emoji"></div>
+      <div class="meme-top" id="meme-top"></div>
+      <div class="meme-bottom" id="meme-bottom"></div>
+    </div>
+    <button class="btn" id="meme-next-btn" onclick="nextMeme()">Next →</button>
+  </section>
+
+  <!-- SCENE 3: GLITCH -->
+  <section class="scene" id="scene-glitch">
+    <h2 id="glitch-heading">SYSTEM NOTICE</h2>
+    <div class="terminal">
+      <div class="bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div id="term-lines"></div>
+    </div>
+    <button class="btn ghost" id="reboot-btn" style="display:none" onclick="goTo('final')">Reboot Heart.exe →</button>
+  </section>
+
+  <!-- SCENE 4: FINAL QUESTION -->
+  <section class="scene" id="scene-final">
+    <div class="kicker">FINAL BOSS</div>
+    <h1 id="final-question">Okay. Real talk. Will you be my girlfriend, Katha?</h1>
+    <div class="sub" id="final-sub">No pressure. Except there is a little bit of pressure.</div>
+    <div class="choice-row">
+      <button class="btn" id="btn-yes" onclick="sayYes()">Yes</button>
+      <button class="btn" id="btn-no">No</button>
+    </div>
+  </section>
+
+  <!-- SCENE 5: SHE SAID YES -->
+  <section class="scene" id="scene-yes">
+    <div class="kicker">BREAKING NEWS</div>
+    <h1 id="yes-heading">SHE SAID YES</h1>
+    <div class="sub" id="yes-sub">Roll credits. This is officially the best code I've ever shipped.</div>
+  </section>
+
+</div>
+
+<div class="footer-note">made with way too much css and a way extra amount of feelings</div>
+
+<script>
+/* ============================================================
+   CONFIG — edit this block to personalize everything.
+   Nothing else in the file needs to change.
+   ============================================================ */
+const CONFIG = {
+  herName: "Katha",
+  quiz: [
+    {
+      q: "Be honest: is this website a little much?",
+      opts: ["Yes, and I love it", "A lot much, actually", "This is exactly the right amount", "Keep going, I'm invested"]
+    }
+  ],
+  memes: [
+    { top: "MY HEART RATE", bottom: "RIGHT NOW", emoji: "💓" }
+  ],
+  glitchLines: [
+    "> booting heart.exe ...",
+    "> loading emotional_backlog.dat ...",
+    "> ERROR 0x4EED: unexpected feelings detected",
+    "> ERROR 0x4EED: feelings not going away",
+    "> attempting fix: telling her directly",
+    "> fix successful. proceeding to final module..."
+  ],
+  finalQuestion: "Okay. Real talk. Will you be my girlfriend, Katha?",
+  finalSub: "No pressure. Except there is a little bit of pressure. I built you a whole website.",
+  yesHeading: "SHE SAID YES",
+  yesSub: "Roll credits. This is officially the best code I've ever shipped."
+};
+
+document.getElementById('final-question').textContent = CONFIG.finalQuestion;
+document.getElementById('final-sub').textContent = CONFIG.finalSub;
+document.getElementById('yes-heading').textContent = CONFIG.yesHeading;
+document.getElementById('yes-sub').textContent = CONFIG.yesSub;
+
+/* ---------- scene switching ---------- */
+function goTo(name){
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  document.getElementById('scene-' + name).classList.add('active');
+  if(name === 'quiz') startQuiz();
+  if(name === 'memes') startMemes();
+  if(name === 'glitch') startGlitch();
+}
+
+/* ---------- Scene 2.5: meme logic ---------- */
+let memeIndex = 0;
+function startMemes(){
+  memeIndex = 0;
+  renderMeme();
+}
+function renderMeme(){
+  const total = CONFIG.memes.length;
+  const item = CONFIG.memes[memeIndex];
+  document.getElementById('meme-emoji').textContent = item.emoji;
+  document.getElementById('meme-top').textContent = item.top;
+  document.getElementById('meme-bottom').textContent = item.bottom;
+  document.getElementById('meme-next-btn').textContent = (memeIndex === total - 1) ? 'Continue →' : 'Next →';
+}
+function nextMeme(){
+  memeIndex++;
+  if(memeIndex >= CONFIG.memes.length){
+    goTo('glitch');
+    return;
+  }
+  renderMeme();
+}
+
+/* ---------- Scene 2: quiz logic ---------- */
+let quizIndex = 0;
+function startQuiz(){
+  quizIndex = 0;
+  renderQuiz();
+}
+function renderQuiz(){
+  const total = CONFIG.quiz.length;
+  if(quizIndex >= total){
+    goTo('memes');
+    return;
+  }
+  const item = CONFIG.quiz[quizIndex];
+  document.getElementById('quiz-progress').style.width = Math.round((quizIndex/total)*100) + '%';
+  document.getElementById('quiz-question').textContent = item.q;
+  const optWrap = document.getElementById('quiz-options');
+  optWrap.innerHTML = '';
+  item.opts.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = opt;
+    b.onclick = () => { quizIndex++; renderQuiz(); };
+    optWrap.appendChild(b);
+  });
+}
+
+/* ---------- Scene 3: glitch / terminal typing ---------- */
+function startGlitch(){
+  const term = document.getElementById('term-lines');
+  const heading = document.getElementById('glitch-heading');
+  term.textContent = '';
+  document.getElementById('reboot-btn').style.display = 'none';
+  let li = 0;
+
+  function typeLine(){
+    if(li >= CONFIG.glitchLines.length){
+      heading.classList.remove('glitching');
+      document.getElementById('reboot-btn').style.display = 'inline-block';
+      return;
+    }
+    const line = CONFIG.glitchLines[li];
+    heading.classList.add('glitching');
+    let ci = 0;
+    term.textContent += (li === 0 ? '' : '\n');
+    const interval = setInterval(() => {
+      term.textContent += line[ci];
+      ci++;
+      if(ci >= line.length){
+        clearInterval(interval);
+        li++;
+        setTimeout(typeLine, 260);
+      }
+    }, 22);
+  }
+  typeLine();
+}
+
+/* ---------- Scene 4: the "No" button that just won't be pressed ---------- */
+const noBtn = document.getElementById('btn-no');
+const yesBtn = document.getElementById('btn-yes');
+const choiceRow = document.querySelector('.choice-row');
+let dodgeCount = 0;
+const dodgeLines = ["barobar", "really?", "Are kyuu?", "sacchi", "are hut", "dammn really", "are jaa re chup chap yess karr abb"];
+
+function rectsOverlap(a, b, pad){
+  return !(a.right + pad < b.left || a.left - pad > b.right || a.bottom + pad < b.top || a.top - pad > b.bottom);
+}
+
+function dodge(){
+  const finalScene = document.getElementById('scene-final');
+  const sceneRect = finalScene.getBoundingClientRect();
+  const rowRect = choiceRow.getBoundingClientRect();
+  const btnW = noBtn.offsetWidth || 100;
+  const btnH = noBtn.offsetHeight || 50;
+
+  const margin = 16;
+  const areaLeft = Math.max(margin, sceneRect.left + margin);
+  const areaRight = Math.min(window.innerWidth - margin, sceneRect.right - margin) - btnW;
+  const areaTop = rowRect.top - 10;
+  const areaBottom = Math.min(window.innerHeight - margin, sceneRect.bottom - margin) - btnH;
+
+  const yesRect = yesBtn.getBoundingClientRect();
+
+  let x, y, attempt = 0, candidate;
+  do {
+    x = areaLeft + Math.random() * Math.max(10, areaRight - areaLeft);
+    y = areaTop + Math.random() * Math.max(10, areaBottom - areaTop);
+    candidate = { left: x, right: x + btnW, top: y, bottom: y + btnH };
+    attempt++;
+  } while (rectsOverlap(candidate, yesRect, 20) && attempt < 25);
+
+  noBtn.style.position = 'fixed';
+  noBtn.style.left = x + 'px';
+  noBtn.style.top = y + 'px';
+  noBtn.style.margin = '0';
+
+  dodgeCount++;
+  noBtn.textContent = dodgeLines[Math.min(dodgeCount-1, dodgeLines.length-1)];
+}
+noBtn.addEventListener('mouseenter', dodge);
+noBtn.addEventListener('click', (e) => { e.preventDefault(); dodge(); });
+noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dodge(); });
+
+/* ---------- Scene 5: yes + confetti ---------- */
+function sayYes(){
+  goTo('yes');
+  launchConfetti();
+}
+
+const canvas = document.getElementById('confetti');
+const ctx = canvas.getContext('2d');
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function launchConfetti(){
+  const colors = ['#ff5da2', '#ffd166', '#6ee7b7', '#f6f1ea'];
+  const pieces = [];
+  const count = 160;
+  for(let i=0;i<count;i++){
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * canvas.height * 0.5,
+      w: 6 + Math.random() * 6,
+      h: 8 + Math.random() * 8,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      speed: 2 + Math.random() * 3,
+      drift: (Math.random() - 0.5) * 2,
+      rot: Math.random() * Math.PI,
+      rotSpeed: (Math.random() - 0.5) * 0.2
+    });
+  }
+  let frame = 0;
+  const maxFrames = 420;
+  function tick(){
+    frame++;
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.y += p.speed;
+      p.x += p.drift;
+      p.rot += p.rotSpeed;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    if(frame < maxFrames){
+      requestAnimationFrame(tick);
+    } else {
+      ctx.clearRect(0,0,canvas.width, canvas.height);
+    }
+  }
+  tick();
+}
+</script>
+
+</body>
+</html>
